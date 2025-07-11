@@ -9,9 +9,9 @@ import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
 
-import { fetchMoviesPage } from '../services/movieService';
-import type { TMDBSearchResponse } from '../services/movieService';
-import type { Movie } from '../types/movie';
+import { fetchMoviesPage } from '../../services/movieService';
+import type { TMDBSearchResponse } from '../../services/movieService';
+import type { Movie } from '../../types/movie';
 
 import css from './App.module.css';
 
