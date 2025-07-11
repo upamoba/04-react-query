@@ -9,37 +9,36 @@ import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
 
-import { fetchMoviesPage, TMDBSearchResponse } from '../services/movieService';
+import { fetchMoviesPage } from '../services/movieService';
+import type { TMDBSearchResponse } from '../services/movieService';
 import type { Movie } from '../types/movie';
+
 import css from './App.module.css';
 
-const App: React.FC = () => {
+const App = () => {
   const [query, setQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery<
-    TMDBSearchResponse,
-    Error
-  >(
-    ['movies', query, page],
-    () => fetchMoviesPage(query, page),
-    {
-      enabled: false,
-      keepPreviousData: true,
-      onSuccess: resp => {
-        if (resp.results.length === 0 && page === 1) {
-          toast('No movies found for your request.');
-        }
-      },
-      onError: () => {
-        toast.error('There was an error, please try again...');
-      },
-    }
-  );
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['movies', query, page],
+    queryFn: (): Promise<TMDBSearchResponse> => fetchMoviesPage(query, page),
+    enabled: false,
+    keepPreviousData: true,
+    onSuccess: (resp: TMDBSearchResponse) => {
+      if (resp.results.length === 0 && page === 1) {
+        toast('No movies found for your request.');
+      }
+    },
+    onError: () => {
+      toast.error('There was an error, please try again...');
+    },
+  });
 
   useEffect(() => {
-    if (query) refetch();
+    if (query) {
+      refetch();
+    }
   }, [query, page, refetch]);
 
   const handleSearch = (q: string) => {
@@ -61,7 +60,6 @@ const App: React.FC = () => {
       {!isLoading && !isError && (
         <>
           <MovieGrid movies={movies} onSelect={setSelected} />
-
           {totalPages > 1 && (
             <ReactPaginate
               pageCount={totalPages}
