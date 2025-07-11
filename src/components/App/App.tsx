@@ -22,20 +22,12 @@ const App: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
- const queryKey = ['movies', searchTerm, page] as const;
+//  const queryKey = ['movies', searchTerm, page] as const;
 
      const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error, TMDBSearchResponse>({
-    queryKey,
+    queryKey: ['movies', searchTerm, page],
     queryFn: () => fetchMoviesPage(searchTerm, page),
     enabled: false,
-    onSuccess: (data: TMDBSearchResponse) => {
-      if (data.results.length === 0 && page === 1) {
-        toast('No movies found for your request.');
-      }
-    },
-    onError: () => {
-      toast.error('There was an error, please try again...');
-    },
   });
   useEffect(() => {
     if (!isLoading) {
@@ -53,8 +45,8 @@ const App: React.FC = () => {
       refetch(); 
   }, [searchTerm, page,refetch ]);
 
-  const handleSearch = (q: string) => {
-    setSearchTerm(q);
+  const handleSearch = (query: string) => {
+    setSearchTerm(query);
     setPage(1);
   };
 
