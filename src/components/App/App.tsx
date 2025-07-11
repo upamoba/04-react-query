@@ -20,25 +20,25 @@ const App = () => {
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error>({
-    queryKey: ['movies', query, page],
-    queryFn: () => fetchMoviesPage(query, page),
-    enabled: false,
-    keepPreviousData: true,
-    onSuccess: (resp: TMDBSearchResponse) => {
-      if (resp.results.length === 0 && page === 1) {
-        toast('No movies found for your request.');
-      }
-    },
-    onError: () => {
-      toast.error('There was an error, please try again...');
-    },
-  });
+  const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error>(
+    ['movies', query, page],
+    () => fetchMoviesPage(query, page),
+    {
+      enabled: false,
+      keepPreviousData: true,
+      onSuccess: resp => {
+        if (resp.results.length === 0 && page === 1) {
+          toast('No movies found for your request.');
+        }
+      },
+      onError: () => {
+        toast.error('There was an error, please try again...');
+      },
+    }
+  );
 
   useEffect(() => {
-    if (query) {
-      refetch();
-    }
+    if (query) refetch();
   }, [query, page, refetch]);
 
   const handleSearch = (q: string) => {
