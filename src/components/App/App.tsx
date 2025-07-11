@@ -17,39 +17,33 @@ import css from './App.module.css';
 
 
 const App: React.FC = () => {
-  const [query, setQuery] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-   const { data, isLoading, isError, refetch } = useQuery<
-    TMDBSearchResponse,
-    Error
-  >(
-  
- ['movies', query, page],
-   
-    {
-      queryFn: () => fetchMoviesPage(query, page),
-      enabled: false,
-      onSuccess: (resp: TMDBSearchResponse)=> {
-        if (resp.results.length === 0 && page === 1) {
-          toast('No movies found for your request.');
-        }
-      },
-      onError: () => {
-        toast.error('There was an error, please try again...');
-      },
-    }
-  );
+ const queryKey = ['movies', searchTerm, page] as const;
+
+     const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error, TMDBSearchResponse>({
+    queryKey,
+    queryFn: () => fetchMoviesPage(searchTerm, page),
+    enabled: false,
+    onSuccess: (data: TMDBSearchResponse) => {
+      if (data.results.length === 0 && page === 1) {
+        toast('No movies found for your request.');
+      }
+    },
+    onError: () => {
+      toast.error('There was an error, please try again...');
+    },
+  });
 
   useEffect(() => {
-    if (query) {
-      refetch();
-    }
-  }, [query, page, refetch]);
+    if (searchTerm)
+      refetch(); 
+  }, [searchTerm, page,refetch ]);
 
   const handleSearch = (q: string) => {
-    setQuery(q);
+    setSearchTerm(q);
     setPage(1);
   };
 
@@ -67,7 +61,6 @@ const App: React.FC = () => {
       {!isLoading && !isError && (
         <>
           <MovieGrid movies={movies} onSelect={setSelected} />
-
           {totalPages > 1 && (
             <ReactPaginate
               pageCount={totalPages}
