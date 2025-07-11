@@ -21,13 +21,15 @@ const App: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery<
+   const { data, isLoading, isError, refetch } = useQuery<
     TMDBSearchResponse,
     Error
   >(
+  
     ['movies', query, page],
-    () => fetchMoviesPage(query, page),
+   
     {
+      queryFn: () => fetchMoviesPage(query, page),
       enabled: false,
       onSuccess: resp => {
         if (resp.results.length === 0 && page === 1) {
@@ -40,7 +42,6 @@ const App: React.FC = () => {
     }
   );
 
-  
   useEffect(() => {
     if (query) {
       refetch();
@@ -83,9 +84,7 @@ const App: React.FC = () => {
         </>
       )}
 
-      {selected && (
-        <MovieModal movie={selected} onClose={() => setSelected(null)} />
-      )}
+      {selected && <MovieModal movie={selected} onClose={() => setSelected(null)} />}
     </>
   );
 };
