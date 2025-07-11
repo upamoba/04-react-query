@@ -22,33 +22,29 @@ const App: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-const { data, isLoading, isError, isSuccess } = useQuery<
-    TMDBSearchResponse,
-    Error
-  >({
+  const { data, isLoading, isError, isSuccess } = useQuery<TMDBSearchResponse, Error>({
     queryKey: ['movies', searchTerm, page],
     queryFn: () => fetchMoviesPage(searchTerm, page),
     enabled: !!searchTerm,
-    keepPreviousData: true,
+    // keepPreviousData: true, // Removed because not supported in current react-query version
     placeholderData: {
       page: 1,
       results: [],
       total_results: 0,
       total_pages: 0,
     },
-    onSuccess: (resp: TMDBSearchResponse) => {
-      if (resp.results.length === 0 && page === 1) {
-        toast('No movies found for your request.');
-      }
-    },
-    onError: () => {
-      toast.error('There was an error, please try again...');
-    },
   });
 
+  
   useEffect(() => {
-   
-  }, [data, isError]);
+    if (!isLoading) {
+      if (isError) {
+        toast.error('There was an error, please try again...');
+      } else if (data && data.results.length === 0 && page === 1) {
+        toast('No movies found for your request.');
+      }
+    }
+  }, [data, isLoading, isError, page]);
 
   const handleSearch = (q: string) => {
     setSearchTerm(q);
