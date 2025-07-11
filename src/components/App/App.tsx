@@ -29,7 +29,6 @@ const App: React.FC = () => {
     () => fetchMoviesPage(query, page),
     {
       enabled: false,
-      keepPreviousData: true,
       onSuccess: resp => {
         if (resp.results.length === 0 && page === 1) {
           toast('No movies found for your request.');
