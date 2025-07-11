@@ -15,12 +15,16 @@ import type { Movie } from '../types/movie';
 
 import css from './App.module.css';
 
-const App = () => {
+
+const App: React.FC = () => {
   const [query, setQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error>(
+  const { data, isLoading, isError, refetch } = useQuery<
+    TMDBSearchResponse,
+    Error
+  >(
     ['movies', query, page],
     () => fetchMoviesPage(query, page),
     {
@@ -37,8 +41,11 @@ const App = () => {
     }
   );
 
+  
   useEffect(() => {
-    if (query) refetch();
+    if (query) {
+      refetch();
+    }
   }, [query, page, refetch]);
 
   const handleSearch = (q: string) => {
@@ -60,6 +67,7 @@ const App = () => {
       {!isLoading && !isError && (
         <>
           <MovieGrid movies={movies} onSelect={setSelected} />
+
           {totalPages > 1 && (
             <ReactPaginate
               pageCount={totalPages}
@@ -76,7 +84,9 @@ const App = () => {
         </>
       )}
 
-      {selected && <MovieModal movie={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <MovieModal movie={selected} onClose={() => setSelected(null)} />
+      )}
     </>
   );
 };
