@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
 import { Toaster, toast } from 'react-hot-toast';
@@ -20,9 +20,9 @@ const App = () => {
   const [page, setPage] = useState<number>(1);
   const [selected, setSelected] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery<TMDBSearchResponse, Error>({
     queryKey: ['movies', query, page],
-    queryFn: (): Promise<TMDBSearchResponse> => fetchMoviesPage(query, page),
+    queryFn: () => fetchMoviesPage(query, page),
     enabled: false,
     keepPreviousData: true,
     onSuccess: (resp: TMDBSearchResponse) => {
