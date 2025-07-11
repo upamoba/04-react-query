@@ -26,12 +26,12 @@ const App: React.FC = () => {
     Error
   >(
   
-    ['movies', query, page],
+ ['movies', query, page],
    
     {
       queryFn: () => fetchMoviesPage(query, page),
       enabled: false,
-      onSuccess: resp => {
+      onSuccess: (resp: TMDBSearchResponse)=> {
         if (resp.results.length === 0 && page === 1) {
           toast('No movies found for your request.');
         }
