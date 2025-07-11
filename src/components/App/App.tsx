@@ -16,6 +16,7 @@ import type { Movie } from '../types/movie';
 import css from './App.module.css';
 
 
+
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState<number>(1);
@@ -36,6 +37,16 @@ const App: React.FC = () => {
       toast.error('There was an error, please try again...');
     },
   });
+  useEffect(() => {
+    if (!isLoading) {
+      if (data && data.results.length === 0 && page === 1) {
+        toast('No movies found for your request.');
+      }
+      if (isError) {
+        toast.error('There was an error, please try again...');
+      }
+    }
+  }, [data, isError, isLoading, page]);
 
   useEffect(() => {
     if (searchTerm)
