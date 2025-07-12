@@ -27,24 +27,35 @@ const App: React.FC = () => {
     queryFn: () => fetchMoviesPage(searchTerm, page),
     enabled: !!searchTerm,
     // keepPreviousData: true, // Removed because not supported in current react-query version
-    placeholderData: {
+    placeholderData: prev => prev ??{
       page: 1,
       results: [],
       total_results: 0,
       total_pages: 0,
     },
   });
+useEffect(() => {
+    if (isError) {
+      toast.error('There was an error, please try again...');
+    }
+  }, [isError]);
 
   
   useEffect(() => {
-    if (!isLoading) {
-      if (isError) {
-        toast.error('There was an error, please try again...');
-      } else if (data && data.results.length === 0 && page === 1) {
-        toast('No movies found for your request.');
-      }
+    if (isSuccess && data?.results.length === 0 && page === 1) {
+      toast('No movies found for your request.');
     }
-  }, [data, isLoading, isError, page]);
+  }, [isSuccess, data, page]);
+  
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     if (isError) {
+  //       toast.error('There was an error, please try again...');
+  //     } else if (data && data.results.length === 0 && page === 1) {
+  //       toast('No movies found for your request.');
+  //     }
+  //   }
+  // }, [data, isLoading, isError, page]);
 
   const handleSearch = (q: string) => {
     setSearchTerm(q);
