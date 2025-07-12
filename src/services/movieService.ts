@@ -12,7 +12,7 @@ const TOKEN    = import.meta.env.VITE_TMDB_TOKEN   as string;
   total_pages: number;
 }
 
-export const fetchMoviesPage = async (
+export const fetchMovies = async (
   query: string,
   page: number
 ): Promise<TMDBSearchResponse> => {
