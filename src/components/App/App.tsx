@@ -1,5 +1,5 @@
 import  { useState, useEffect  } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData  } from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -10,7 +10,7 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
 
 import { fetchMovies } from '../../services/movieService';
-import type { TMDBSearchResponse } from '../../services/movieService';
+// import type { TMDBSearchResponse } from '../../services/movieService';
 import type { Movie } from '../../types/movie';
 
 import css from './App.module.css';
@@ -23,17 +23,19 @@ const App: React.FC = () => {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
 
- const { data, isLoading, isError, isSuccess } = useQuery<TMDBSearchResponse, Error>({
+ const { data, isLoading, isError, isSuccess } = useQuery  ({
     queryKey: ['movies', searchTerm, page],
     queryFn: () => fetchMovies(searchTerm, page),
     enabled: !!searchTerm,
-      placeholderData: prev => prev ??{
-      page: 1,
-      results: [],
-      total_results: 0,
-      total_pages: 0,
-    },
-  });
+    placeholderData: keepPreviousData,
+});
+    //   placeholderData: prev => prev ??{
+    //   page: 1,
+    //   results: [],
+    //   total_results: 0,
+    //   total_pages: 0,
+    // },
+  
 useEffect(() => {
     if (isError) {
       toast.error('There was an error, please try again...');
